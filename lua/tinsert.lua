@@ -1,8 +1,26 @@
-local data = ARGV[argIndex + 1]
+if #ARGV ~= 4 then
+  return redis.error_reply("ERR wrong number of arguments for 'tinsert' command")
+end
+
+local data = ARGV[2]
+local parentKey = prefix .. data .. '::P'
+
+local oldParent = redis.call('get', parentKey)
+if oldParent then
+  -- Remove from the old parent
+  local list = cmsgpack.unpack(oldParent)
+  for i, v in ipairs(list) do
+    if v[1] == insertPivot then
+      table.remove(list, i)
+      break;
+    end
+  end
+  redis.call('set', parentKey, cmsgpack.pack(list))
+end
 
 -- Among BEFORE, AFTER and INDEX
-local insertType = string.upper(ARGV[argIndex + 2])
-local insertPivot = ARGV[argIndex + 3]
+local insertType = string.upper(ARGV[3])
+local insertPivot = tonumber(ARGV[4])
 
 local list = redis.call('get', key)
 if list then
@@ -15,7 +33,7 @@ end
 -- the index of the pivot
 if insertType == 'BEFORE' or insertType == 'AFTER' then
   for i, v in ipairs(list) do
-    if v == insertPivot then
+    if v[1] == insertPivot then
       insertPivot = i
       break
     end
@@ -57,6 +75,7 @@ end
 table.insert(list, insertPivot, { data, 0 })
 
 redis.call('set', key, cmsgpack.pack(list))
+redis.call('set', parentKey, id)
 
 -- Return the inserted position
 return insertPivot
