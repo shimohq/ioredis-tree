@@ -14,7 +14,7 @@ end
 -- Convert BEFORE and AFTER to INDEX by finding out
 -- the index of the pivot
 if insertType == 'BEFORE' or insertType == 'AFTER' then
-  for i, v in ipairs(items) do
+  for i, v in ipairs(list) do
     if v == insertPivot then
       insertPivot = i
       break
