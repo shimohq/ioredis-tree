@@ -1,6 +1,9 @@
 # ioredis-tree
 [Work In Progress] A robust tree structure implementation for Redis
 
+[![Build Status](https://travis-ci.org/shimohq/ioredis-tree.svg?branch=master)](https://travis-ci.org/shimohq/ioredis-tree)
+[![Dependency Status](https://david-dm.org/shimohq/ioredis-tree.svg)](https://david-dm.org/shimohq/ioredis-tree)
+
 ## Install
 
 ```shell
