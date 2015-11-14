@@ -208,7 +208,7 @@ Notice that although node '2' has a child (its `childCount` is `1`), it doesn't 
 
 ### TDEL key node
 
-Delete a node recursively. Returns the node that being deleted;
+Delete a node recursively. Returns the number of nodes that being deleted;
 
 ```javascript
 redis.tdel('mytree', '2'); // returns 2, since "2" and "5" are deleted.
