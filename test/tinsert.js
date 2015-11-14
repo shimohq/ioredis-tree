@@ -60,14 +60,31 @@ describe('tinsert', function () {
 
     it('inserts before the pivot', function () {
       return redis.tinsert('tree', 'ROOT', '0', { before: 1 }).then(function (index) {
-        // expect(index).to.eql(1);
-        return redis.tchildren('tree', 'ROOT');
-      }).then(console.log);
+        expect(index).to.eql(1);
+      });
     });
 
     it('inserts to the head when pivot is not found', function () {
       return redis.tinsert('tree', 'ROOT', '0', { before: 'non-exists' }).then(function (index) {
         expect(index).to.eql(0);
+      });
+    });
+  });
+
+  describe('AFTER', function () {
+    beforeEach(function () {
+      return redis.tinsert('tree', 'ROOT', '1');
+    });
+
+    it('inserts after the pivot', function () {
+      return redis.tinsert('tree', 'ROOT', '0', { after: 'pivot' }).then(function (index) {
+        expect(index).to.eql(1);
+      });
+    });
+
+    it('inserts to the tail when pivot is not found', function () {
+      return redis.tinsert('tree', 'ROOT', '0', { after: 'non-exists' }).then(function (index) {
+        expect(index).to.eql(2);
       });
     });
   });

@@ -47,7 +47,7 @@ end
 
 -- Among BEFORE, AFTER and INDEX
 local insertType = string.upper(ARGV[3])
-local insertPivot = tonumber(ARGV[4])
+local insertPivot = ARGV[4]
 
 local list = redis.call('get', key)
 if list then
@@ -70,7 +70,11 @@ if insertType == 'BEFORE' or insertType == 'AFTER' then
   -- If pivot is not found, set the index to
   -- head (BEFORE) or tail (AFTER)
   if index then
-    insertPivot = index - 1
+    if insertType == 'BEFORE' then
+      insertPivot = index - 1
+    else
+      insertPivot = index
+    end
   else
     if insertType == 'BEFORE' then
       insertPivot = 0
@@ -80,6 +84,8 @@ if insertType == 'BEFORE' or insertType == 'AFTER' then
   end
 
   insertType = 'INDEX'
+else
+  insertPivot = tonumber(insertPivot)
 end
 
 if insertType ~= 'INDEX' then
