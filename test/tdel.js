@@ -36,7 +36,7 @@ describe('tdel', function () {
 
   it('does not leave any keys', function () {
     return redis.tdel('tree', 'ROOT').then(function () {
-      return redis.keys('*', function (keys) {
+      return redis.keys('*').then(function (keys) {
         expect(keys).to.eql([]);
       });
     });
