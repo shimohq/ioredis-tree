@@ -5,9 +5,9 @@ function loadScript(name) {
   return fs.readFileSync(path.join(__dirname, name + '.lua'), 'utf8');
 }
 
-var head = loadScript('_head').split('\n').join(' ') + '\n';
+var head = loadScript('_head').split('\n').join(' ') + ' ';
 
-var commands = ['tinsert', 'tchildren', 'tparent', 'tancestors', 'tdel'].map(function (command) {
+var commands = ['tinsert', 'tchildren', 'tparent', 'tancestors', 'tdel', 'texists'].map(function (command) {
   return {
     name: command,
     lua: head + loadScript(command)
