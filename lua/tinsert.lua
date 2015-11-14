@@ -5,17 +5,33 @@ end
 local data = ARGV[2]
 local parentKey = prefix .. data .. '::P'
 
-local oldParent = redis.call('get', parentKey)
-if oldParent then
-  -- Remove from the old parent
-  local list = cmsgpack.unpack(oldParent)
+local formerParent = redis.call('get', parentKey)
+local formerParentValue
+local formerGrandparent
+local formerGrandparentValue
+if formerParent then
+  -- Remove from the former parent
+  local list = cmsgpack.unpack(prefix .. formerParent)
   for i, v in ipairs(list) do
     if v[1] == insertPivot then
       table.remove(list, i)
+      formerParentValue = list
       break;
     end
   end
-  redis.call('set', parentKey, cmsgpack.pack(list))
+
+  -- Update child count in the grandparent
+  formerGrandparent = redis.call('get', prefix .. formerParent .. '::P')
+  if formerGrandparent then
+    local list = cmsgpack.unpack(prefix .. formerGrandparent)
+    for i, v in ipairs(list) do
+      if v[1] == formerParent then
+        v[2] = v[2] - 1
+        formerGrandparentValue = list
+        break;
+      end
+    end
+  end
 end
 
 -- Among BEFORE, AFTER and INDEX
@@ -74,6 +90,12 @@ end
 
 table.insert(list, insertPivot, { data, 0 })
 
+if formerParentValue then
+  redis.call('set', formerParent, cmsgpack.pack(formerParentValue))
+  if formerGrandparentValue then
+    redis.call('set', formerGrandparent, cmsgpack.pack(formerGrandparentValue))
+  end
+end
 redis.call('set', key, cmsgpack.pack(list))
 redis.call('set', parentKey, id)
 
