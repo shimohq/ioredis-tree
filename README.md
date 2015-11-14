@@ -1,5 +1,5 @@
 # ioredis-tree
-A robust tree structure implementation for Redis
+[Work In Progress] A robust tree structure implementation for Redis
 
 ## Install
 
