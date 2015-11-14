@@ -1,6 +1,6 @@
 {
   "name": "ioredis-tree",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A robust tree structure implementation for Redis",
   "main": "index.js",
   "directories": {
@@ -23,5 +23,10 @@
   "bugs": {
     "url": "https://github.com/shimohq/ioredis-tree/issues"
   },
-  "homepage": "https://github.com/shimohq/ioredis-tree#readme"
+  "homepage": "https://github.com/shimohq/ioredis-tree#readme",
+  "devDependencies": {
+    "chai": "^3.4.0",
+    "ioredis": "^1.10.0",
+    "mocha": "^2.3.3"
+  }
 }
