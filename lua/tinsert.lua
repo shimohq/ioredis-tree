@@ -39,7 +39,7 @@ if redis.call('exists', prefix .. data) == 1 then
   local parent = id
   while parent do
     if parent == data then
-      return redis.error_reply('ERR node to be inserted into cannot be the posterity of new node')
+      return redis.error_reply('ERR parent node cannot be the posterity of new node')
     end
     parent = redis.call('get', prefix .. id .. '::P')
   end

@@ -111,7 +111,7 @@ Creates:
         +-----+
 ```
 
-Notice that if the node to be inserted is already belong an other node, it will be removed from the former parent before being inserted to the new parent:
+Notice that if the node to be inserted is already belong to an other node, it will be removed from the former parent before being inserted to the new parent:
 
 ```javascript
 redis.tinsert('mytree', '2', '5');
@@ -137,7 +137,7 @@ It's not allowed to move a node into its posterity, which will lead an error:
 
 ```javascript
 redis.tinsert('mytree', '3', '1');
-// ERR node to be inserted into cannot be the posterity of new node
+// ERR parent node cannot be the posterity of new node
 ```
 
 ### TPARENT key node
