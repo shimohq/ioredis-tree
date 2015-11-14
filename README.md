@@ -237,8 +237,8 @@ redis.texists('mytree', '1'); // 1
 
 ## Cluster Compatibility
 
-This module supports Redis Cluster by making sure all nodes that are belong to a tree have a same slot.
+This module supports Redis Cluster by ensuring all nodes that are belong to a tree have a same slot.
 
 ## Performance
 
-Benefiting from the performance of Redis, modifying a tree is very fast. For instance, get all children of a tree with level of 100 recursively in a iMac 5k costs 4ms.
+Benefiting from the high performance of Redis, modifying a tree is very fast. For instance, getting all children of a tree with the level of 100 recursively in a iMac 5k costs 4ms.
