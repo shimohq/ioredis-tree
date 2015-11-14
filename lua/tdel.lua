@@ -24,6 +24,7 @@ if parent then
   for i, v in ipairs(list) do
     if v[1] == id then
       v[2] = v[2] - 1
+      deleteCount = deleteCount + 1
     end
   end
   redis.call('set', prefix .. parent , cmsgpack.pack(list))
@@ -31,4 +32,4 @@ end
 
 delNode(id)
 
-return deleteCount + 1
+return deleteCount

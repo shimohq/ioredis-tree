@@ -11,9 +11,9 @@ describe('tdel', function () {
   });
 
   it('returns 0 when tree or node does not exist', function () {
-    return redis.del('non-exist tree', 'ROOT').then(function (res) {
+    return redis.tdel('non-exist tree', 'ROOT').then(function (res) {
       expect(res).to.eql(0);
-      return redis.del('tree', 'non-exist node').then(function (res) {
+      return redis.tdel('tree', 'non-exist node').then(function (res) {
         expect(res).to.eql(0);
       });
     });

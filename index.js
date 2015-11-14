@@ -28,6 +28,20 @@ function RedisTree(redis) {
     };
   })(redis.tchildren);
 
+  (function (tancestors) {
+    redis.tancestors = function (key, node, options, callback) {
+      if (typeof options === 'function') {
+        callback = options;
+        options = null;
+      }
+      var argv = [key, node];
+      if (options && options.level != null) {
+        argv.push('LEVEL', options.level);
+      }
+      return tancestors.apply(redis, argv).nodeify(callback);
+    };
+  })(redis.tancestors);
+
   (function (tinsert) {
     redis.tinsert = function (key, parent, node, options, callback) {
       if (typeof options === 'function') {
@@ -45,9 +59,7 @@ function RedisTree(redis) {
       } else {
         argv.push('INDEX', -1);
       }
-      return tinsert.apply(redis, argv).then(function (res) {
-        return res;
-      }).nodeify(callback);
+      return tinsert.apply(redis, argv).nodeify(callback);
     };
   })(redis.tinsert);
 }
