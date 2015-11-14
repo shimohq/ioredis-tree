@@ -5,7 +5,7 @@ function loadScript(name) {
   return fs.readFileSync(path.join(__dirname, name + '.lua'), 'utf8');
 }
 
-var head = loadScript('_head') + '\n';
+var head = loadScript('_head').split('\n').join(' ') + '\n';
 
 var commands = ['tinsert', 'tchildren', 'tparent', 'tancestors', 'tdel'].map(function (command) {
   return {

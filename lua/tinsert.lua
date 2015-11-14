@@ -110,6 +110,20 @@ end
 
 table.insert(list, insertPivot, { data, 0 })
 
+-- Update parent childCount
+local grandparent = redis.call('get', key .. '::P')
+if grandparent then
+  local grandparentValue = redis.call('get', prefix .. grandparent);
+  local list = cmsgpack.unpack(grandparentValue)
+  for i, v in ipairs(list) do
+    if v[1] == id then
+      v[2] = v[2] + 1
+      redis.call('set', prefix .. grandparent, cmsgpack.pack(list));
+      break;
+    end
+  end
+end
+
 if formerParentValue then
   redis.call('set', formerParent, cmsgpack.pack(formerParentValue))
   if formerGrandparentValue then
