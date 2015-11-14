@@ -33,4 +33,12 @@ describe('tdel', function () {
       });
     });
   });
+
+  it('does not leave any keys', function () {
+    return redis.tdel('tree', 'ROOT').then(function () {
+      return redis.keys('*', function (keys) {
+        expect(keys).to.eql([]);
+      });
+    });
+  });
 });

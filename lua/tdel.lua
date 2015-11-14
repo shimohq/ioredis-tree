@@ -3,18 +3,19 @@ local deleteCount = 0
 local delNode
 delNode = function (id)
   local value = redis.call('get', prefix .. id)
-  if not value then
-    return
-  end
-  local list = cmsgpack.unpack(value)
-  deleteCount = deleteCount + #list
-  for i, v in ipairs(list) do
-    if v[2] > 0 then
-      delNode(v[1])
+  if value then
+    local list = cmsgpack.unpack(value)
+    deleteCount = deleteCount + #list
+    for i, v in ipairs(list) do
+      if v[2] > 0 then
+        delNode(v[1])
+      else
+        redis.call('del', prefix .. v[1] .. '::P')
+      end
     end
+    redis.call('del', prefix .. id)
   end
 
-  redis.call('del', prefix .. id)
   redis.call('del', prefix .. id .. '::P')
 end
 
