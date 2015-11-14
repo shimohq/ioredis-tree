@@ -11,7 +11,7 @@ local formerGrandparent
 local formerGrandparentValue
 if formerParent then
   -- Remove from the former parent
-  local list = cmsgpack.unpack(prefix .. formerParent)
+  local list = cmsgpack.unpack(redis.call('get', prefix .. formerParent))
   for i, v in ipairs(list) do
     if v[1] == insertPivot then
       table.remove(list, i)
