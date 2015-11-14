@@ -34,6 +34,17 @@ if formerParent then
   end
 end
 
+-- Prevent inserting data into its posterity
+if redis.call('exists', prefix .. data) == 1 then
+  local parent = id
+  while parent do
+    if parent == data then
+      return redis.error_reply('ERR node to be inserted into cannot be the posterity of new node')
+    end
+    parent = redis.call('get', prefix .. id .. '::P')
+  end
+end
+
 -- Among BEFORE, AFTER and INDEX
 local insertType = string.upper(ARGV[3])
 local insertPivot = tonumber(ARGV[4])
@@ -48,16 +59,19 @@ end
 -- Convert BEFORE and AFTER to INDEX by finding out
 -- the index of the pivot
 if insertType == 'BEFORE' or insertType == 'AFTER' then
+  local index
   for i, v in ipairs(list) do
     if v[1] == insertPivot then
-      insertPivot = i
+      index = i
       break
     end
   end
 
   -- If pivot is not found, set the index to
   -- head (BEFORE) or tail (AFTER)
-  if not index then
+  if index then
+    insertPivot = index - 1
+  else
     if insertType == 'BEFORE' then
       insertPivot = 0
     else
@@ -100,4 +114,4 @@ redis.call('set', key, cmsgpack.pack(list))
 redis.call('set', parentKey, id)
 
 -- Return the inserted position
-return insertPivot
+return insertPivot - 1

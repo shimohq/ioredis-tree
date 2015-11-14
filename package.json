@@ -1,0 +1,27 @@
+{
+  "name": "ioredis-tree",
+  "version": "1.0.0",
+  "description": "A robust tree structure implementation for Redis",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shimohq/ioredis-tree.git"
+  },
+  "keywords": [
+    "ioredis",
+    "tree",
+    "redis"
+  ],
+  "author": "Zihua Li <i@zihua.li>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shimohq/ioredis-tree/issues"
+  },
+  "homepage": "https://github.com/shimohq/ioredis-tree#readme"
+}

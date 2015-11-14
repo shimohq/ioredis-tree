@@ -17,7 +17,7 @@ local getChildren = function (id, level, result)
   return result
 end
 
-local level = ARGV[argIndex + 1]
+local level = ARGV[2]
 if level then
   level = tonumber(level)
   if level == 0 then

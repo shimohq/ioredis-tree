@@ -7,9 +7,68 @@ function RedisTree(redis) {
       lua: command.lua
     });
   });
+
+  // Setup transformers
+  (function (tchildren) {
+    redis.tchildren = function (key, node, options, callback) {
+      if (typeof options === 'function') {
+        callback = options;
+        options = null;
+      }
+      var argv = [key, node];
+      if (options && options.level != null) {
+        argv.push('LEVEL', options.level);
+      }
+      return tchildren.apply(redis, argv).then(function (res) {
+        if (!Array.isArray(res)) {
+          return res;
+        }
+        return res.map(convertNode);
+      }).nodeify(callback);
+    };
+  })(redis.tchildren);
+
+  (function (tinsert) {
+    redis.tinsert = function (key, parent, node, options, callback) {
+      if (typeof options === 'function') {
+        callback = options;
+        options = null;
+      }
+      var argv = [key, parent, node];
+      options = options || {};
+      if (options.index != null) {
+        argv.push('INDEX', options.index);
+      } else if (options.before != null) {
+        argv.push('BEFORE', options.before);
+      } else if (options.after != null) {
+        argv.push('AFTER', options.after);
+      } else {
+        argv.push('INDEX', -1);
+      }
+      return tinsert.apply(redis, argv).then(function (res) {
+        return res;
+      }).nodeify(callback);
+    };
+  })(redis.tinsert);
 }
 
-// redis.tchildren('dir', id, level);
+function convertNode(node) {
+  var ret = {
+    node: node[0],
+    childCount: node[1]
+  };
+
+  if (node.length > 2) {
+    ret.children = [];
+    for (var i = 2; i < node.length; i++) {
+      ret.children.push(convertNode(node[i]));
+    }
+  }
+
+  return ret;
+};
+
+// redis.tchildren('dir', id, 'LEVEL', level);
 // redis.tchildren('dir', 'ROOT', user, level);
 
 // redis.tancestors('dir', id);

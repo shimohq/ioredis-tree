@@ -7,7 +7,7 @@ function loadScript(name) {
 
 var head = loadScript('_head') + '\n';
 
-var commands = ['tinsert', 'tchildren'].map(function (command) {
+var commands = ['tinsert', 'tchildren', 'tparent', 'tancestors', 'tdel'].map(function (command) {
   return {
     name: command,
     lua: head + loadScript(command)
