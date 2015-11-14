@@ -59,11 +59,11 @@ Creates:
 +-----+         +-----+
 ```
 
-`TINSERT` supports three optional options to specified where to insert the node into:
+`TINSERT` accepts one of the three optional options to specified where to insert the node into:
 
-* `INDEX`: Insert the node to the specified index. Index starts with `0`, and it can also be negative numbers indicating offsets starting at the end of the list. For example, `-1` is the last element of the list, `-2` the penultimate, and so on. If the index is out of the range, the node will insert into the tail (when positive) or head (when negative).
-* `BEFORE`: Insert the node before the specified node. Insert to the head when the specified is not found.
-* `AFTER`: Insert the node after the specified node. Insert to the tail when the specified is not found.
+1. `INDEX`: Insert the node to the specified index. Index starts with `0`, and it can also be negative numbers indicating offsets starting at the end of the list. For example, `-1` is the last element of the list, `-2` the penultimate, and so on. If the index is out of the range, the node will insert into the tail (when positive) or head (when negative).
+2. `BEFORE`: Insert the node before the specified node. Insert to the head when the specified node is not found.
+3. `AFTER`: Insert the node after the specified node. Insert to the tail when the specified node is not found.
 
 Continue with our example:
 
@@ -106,4 +106,128 @@ Creates:
         +--+--+
         |  5  |
         +-----+
+```
+
+Notice that if the node to be inserted is already belong an other node, it will be removed from the former parent before being inserted to the new parent:
+
+```javascript
+redis.tinsert('mytree', '2', '5');
+```
+
+Creates:
+
+```
+        +-----+
+        |  1  |
+   +----+--+--+----+
+   |       |       |
++--+--+ +--+--+ +--+--+
+|  2  | |  3  | |  4  |
++-----+ +--+--+ +-----+
+   |
++--+--+
+|  5  |
++-----+
+```
+
+It's not allowed to move a node into its posterity, which will lead an error:
+
+```javascript
+redis.tinsert('mytree', '3', '1');
+// ERR node to be inserted into cannot be the posterity of new node
+```
+
+### TPARENT key node
+
+Get the parent of the node. Returns `null` when doesn't have parent.
+
+```javascript
+redis.tparent('mytree', '5'); // '2'
+redis.tparent('mytree', '1'); // null
+redis.tparent('non-exists tree', '1'); // null
+redis.tparent('mytree', 'non-exists node'); // null
+```
+
+### TANCESTORS key node
+
+Get the ancestors of the node. Returns an empty arrey when doesn't have ancestors.
+
+```javascript
+redis.tancestors('mytree', '5'); // ['2', '1']
+redis.tancestors('mytree', '1'); // []
+redis.tancestors('non-exists tree', '1'); // []
+redis.tancestors('mytree', 'non-exists node'); // []
+```
+
+`TANCESTORS` accepts a `LEVEL` option to specified how many levels of ancestors to fetch:
+
+```javascript
+redis.tancestors('mytree', '5', { level: 2 }); // ['2', '1']
+redis.tancestors('mytree', '5', { level: 1 }); // ['2']
+redis.tancestors('mytree', '5', { level: 0 }); // []
+redis.tancestors('mytree', '5', { level: 3 }); // ['2', '1']
+```
+
+### TCHILDREN key node
+
+Get the children of the node. Each node has at least two properties:
+
+1. `node`: The node itself.
+2. `childCount`: The number of children of the node.
+
+If the `childCount` is not `0`, there will be an additional `children` property, which is an array containing the children of the node.
+
+
+```javascript
+redis.tchildren('mytree', '1');
+// [
+//   { node: '2', childCount: 1, children: [{ node: '5', childCount 0 }] },
+//   { node: '3', childCount: 0 },
+//   { node: '4', childCount: 0 }
+// ]
+redis.tchildren('mytree', '5'); // []
+redis.tchildren('non-exists tree', '1'); // []
+redis.tchildren('mytree', 'non-exists node'); // []
+```
+
+`TCHILDREN` accepts a `LEVEL` option to specified how many levels of children to fetch:
+
+```javascript
+redis.tchildren('mytree', '1', { level: 1 });
+// [
+//   { node: '2', childCount: 1 },
+//   { node: '3', childCount: 0 },
+//   { node: '4', childCount: 0 }
+// ]
+```
+
+Notice that although node '2' has a child (its `childCount` is `1`), it doesn't has the `children` property since we are only insterested in the first level children by specifying `{ level: 1 }`.
+
+### TDEL key node
+
+Delete a node recursively. Returns the node that being deleted;
+
+```javascript
+redis.tdel('mytree', '2'); // returns 2, since "2" and "5" are deleted.
+```
+
+Creates:
+
+```
+        +-----+
+        |  1  |
+   +----+--+--+----+
+   |               |
++--+--+         +--+--+
+|  3  |         |  4  |
++-----+         +-----+
+```
+
+### TEXISTS key node
+
+Returns if node exists.
+
+```javascript
+redis.texists('mytree', '2'); // 0
+redis.texists('mytree', '1'); // 1
 ```
