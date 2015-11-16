@@ -92,29 +92,7 @@ Creates:
 ```
 
 ```javascript
-redis.tinsert('mytree', '3', '5', { index: 1000 });
-```
-
-Creates:
-
-```
-        +-----+
-        |  1  |
-   +----+--+--+----+
-   |       |       |
-+--+--+ +--+--+ +--+--+
-|  2  | |  3  | |  4  |
-+-----+ +--+--+ +-----+
-           |
-        +--+--+
-        |  5  |
-        +-----+
-```
-
-Notice that if the node to be inserted is already belong to an other node, it will be removed from the former parent before being inserted to the new parent:
-
-```javascript
-redis.tinsert('mytree', '2', '5');
+redis.tinsert('mytree', '2', '5', { index: 1000 });
 ```
 
 Creates:
@@ -176,17 +154,17 @@ redis.tancestors('mytree', '5', { level: 3 }); // ['2', '1']
 Get the children of the node. Each node has at least two properties:
 
 1. `node`: The node itself.
-2. `childCount`: The number of children of the node.
+2. `hasChild`: `1` or `0`, whether the node has at least one child.
 
-If the `childCount` is not `0`, there will be an additional `children` property, which is an array containing the children of the node.
+If the `hasChild` is `1`, there will be an additional `children` property, which is an array containing the children of the node.
 
 
 ```javascript
 redis.tchildren('mytree', '1');
 // [
-//   { node: '2', childCount: 1, children: [{ node: '5', childCount 0 }] },
-//   { node: '3', childCount: 0 },
-//   { node: '4', childCount: 0 }
+//   { node: '2', hasChild: 1, children: [{ node: '5', hasChild 0 }] },
+//   { node: '3', hasChild: 0 },
+//   { node: '4', hasChild: 0 }
 // ]
 redis.tchildren('mytree', '5'); // []
 redis.tchildren('non-exists tree', '1'); // []
@@ -198,13 +176,13 @@ redis.tchildren('mytree', 'non-exists node'); // []
 ```javascript
 redis.tchildren('mytree', '1', { level: 1 });
 // [
-//   { node: '2', childCount: 1 },
-//   { node: '3', childCount: 0 },
-//   { node: '4', childCount: 0 }
+//   { node: '2', hasChild: 1 },
+//   { node: '3', hasChild: 0 },
+//   { node: '4', hasChild: 0 }
 // ]
 ```
 
-Notice that although node '2' has a child (its `childCount` is `1`), it doesn't has the `children` property since we are only insterested in the first level children by specifying `{ level: 1 }`.
+Notice that although node '2' has a child (its `hasChild` is `1`), it doesn't has the `children` property since we are only insterested in the first level children by specifying `{ level: 1 }`.
 
 ### TDEL key node
 

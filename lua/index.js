@@ -5,7 +5,7 @@ function loadScript(name) {
   return fs.readFileSync(path.join(__dirname, name + '.lua'), 'utf8');
 }
 
-var head = loadScript('_head').split('\n').join(' ') + ' ';
+var head = loadScript('_head').split('\n').filter(isNotCommend).join(' ') + ' ';
 
 var commands = ['tinsert', 'tchildren', 'tparent', 'tancestors', 'tdel', 'texists'].map(function (command) {
   return {
@@ -15,3 +15,7 @@ var commands = ['tinsert', 'tchildren', 'tparent', 'tancestors', 'tdel', 'texist
 });
 
 module.exports = commands;
+
+function isNotCommend(line) {
+  return line.trim().slice(0, 2) !== '--';
+}

@@ -1,1 +1,1 @@
-return redis.call('get', key .. '::P')
+return redis.call('smembers', key .. '::P')
