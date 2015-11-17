@@ -243,7 +243,7 @@ The `count` argument influences the operation in the following ways:
 
 ### TDESTROY key node
 
-Destroy a node recursively and remove all references of it.
+Destroy a node recursively and remove all references of it. Returns the count of nodes being deleted.
 
 ```javascript
 redis.tdel('mytree', '2'); // returns 2, since "2" and "5" are deleted.
