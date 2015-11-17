@@ -45,6 +45,14 @@ local deleteReference = function (parent, node, count)
     end
   end
 
+  if deleted > 0 then
+    redis.call('set', prefix .. parent, cmsgpack.pack(list))
+  end
+
+  if remain == 0 then
+    redis.call('srem', prefix .. node .. '::P', parent)
+  end
+
   if #list == 0 then
     updateHasChildenCache(parent, 0)
   end

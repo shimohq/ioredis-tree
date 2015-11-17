@@ -8,12 +8,17 @@ destroyNode = function (id)
   end
 
   local value = redis.call('get', prefix .. id)
+
+  if #parents > 0 or value then
+    deleteCount = deleteCount + 1
+  end
+
   if not value then
     return
   end
 
   local list = cmsgpack.unpack(value)
-  deleteCount = deleteCount + #list
+  -- deleteCount = deleteCount + #list
   for _, node in ipairs(list) do
     destroyNode(node[1])
   end
