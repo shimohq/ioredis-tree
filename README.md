@@ -187,9 +187,9 @@ If the `hasChild` is `true`, there will be an additional `children` property, wh
 ```javascript
 redis.tchildren('mytree', '1');
 // [
-//   { node: '2', hasChild: 1, children: [{ node: '5', hasChild 0 }] },
-//   { node: '3', hasChild: 0 },
-//   { node: '4', hasChild: 0 }
+//   { node: '2', hasChild: true, children: [{ node: '5', hasChild 0 }] },
+//   { node: '3', hasChild: false },
+//   { node: '4', hasChild: false }
 // ]
 redis.tchildren('mytree', '5'); // []
 redis.tchildren('non-exists tree', '1'); // []
@@ -201,9 +201,9 @@ redis.tchildren('mytree', 'non-exists node'); // []
 ```javascript
 redis.tchildren('mytree', '1', { level: 1 });
 // [
-//   { node: '2', hasChild: 1 },
-//   { node: '3', hasChild: 0 },
-//   { node: '4', hasChild: 0 }
+//   { node: '2', hasChild: true },
+//   { node: '3', hasChild: false },
+//   { node: '4', hasChild: false }
 // ]
 ```
 
