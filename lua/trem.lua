@@ -1,36 +1,66 @@
+if #ARGV ~= 3 then
+  return redis.error_reply("ERR wrong number of arguments for 'trem' command")
+end
+
+local deleteReference = function (parent, node, count)
+  local value = redis.call('get', prefix .. parent)
+
+  if not value then
+    return 0
+  end
+
+  local list = cmsgpack.unpack(value)
+
+  local listSize = #list
+  if count == 0 then
+    count = -listSize
+  end
+
+  local remain = 0
+  local deleted = 0
+
+  if count < 0 then
+    count = -count
+    for i = listSize, 1, -1 do
+       local item = list[i];
+       if item[1] == id then
+         if count == deleted then
+           remain = remain + 1
+         else
+          table.remove(list, i)
+          deleted = deleted + 1
+         end
+       end
+    end
+  else
+    local i = 1
+    while i <= listSize do
+       local item = list[i];
+       if item[1] == id then
+         if count == deleted then
+           remain = remain + 1
+         else
+           table.remove(list, i)
+           deleted = deleted + 1
+         end
+        else
+          i = i + 1
+       end
+    end
+  end
+
+  return remain
+end
+
 local deleteCount = 0
 
-local delNode
-delNode = function (id)
-  local value = redis.call('get', prefix .. id)
-  if value then
-    local list = cmsgpack.unpack(value)
-    deleteCount = deleteCount + #list
-    for i, v in ipairs(list) do
-      if v[2] > 0 then
-        delNode(v[1])
-      else
-        redis.call('del', prefix .. v[1] .. '::P')
-      end
-    end
-    redis.call('del', prefix .. id)
-  end
+-- Parent: prefix .. id / key
+local count = tonumber(ARGV[2])
+local node = ARGV[3]
 
-  redis.call('del', prefix .. id .. '::P')
+local remain = deleteReference(id, node, count)
+if remain == 0 then
+  redis.call('srem', prefix .. node .. '::P')
 end
 
-local parent = redis.call('get', prefix .. id .. '::P')
-if parent then
-  local list = cmsgpack.unpack(redis.call('get', prefix .. parent))
-  for i, v in ipairs(list) do
-    if v[1] == id then
-      v[2] = v[2] - 1
-      deleteCount = deleteCount + 1
-    end
-  end
-  redis.call('set', prefix .. parent , cmsgpack.pack(list))
-end
-
-delNode(id)
-
-return deleteCount
+return remain
