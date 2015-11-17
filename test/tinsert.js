@@ -8,7 +8,7 @@ describe('tinsert', function () {
       expect(index).to.eql(0);
       return redis.tchildren('non-exists tree', 'parent');
     }).then(function (children) {
-      expect(children).to.eql([{ node: 'node', childCount: 0 }]);
+      expect(children).to.eql([{ node: 'node', hasChild: false }]);
     });
   });
 
@@ -18,7 +18,7 @@ describe('tinsert', function () {
         expect(index).to.eql(1);
         return redis.tchildren('tree', 'ROOT');
       }).then(function (children) {
-        expect(children).to.eql([{ node: 'pivot', childCount: 0 }, { node: 'node', childCount: 0 }]);
+        expect(children).to.eql([{ node: 'pivot', hasChild: false }, { node: 'node', hasChild: false }]);
       });
     });
 

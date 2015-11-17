@@ -1,4 +1,4 @@
-describe.only('tchildren', function () {
+describe('tchildren', function () {
   it('returns empty array when tree does not exist', function () {
     return redis.tchildren('non-exist tree', 'ROOT').then(function (res) {
       expect(res).to.eql([]);
