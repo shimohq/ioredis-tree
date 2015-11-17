@@ -111,6 +111,32 @@ Creates:
 +-----+
 ```
 
+A node can have multiple parents, say we insert `4` into `5`:
+
+```javascript
+redis.tinsert('mytree', '5', '4');
+```
+
+Creates:
+
+```
+        +-----+
+        |  1  |
+   +----+--+--+----+
+   |       |       |
++--+--+ +--+--+ +--+--+
+|  2  | |  3  | |  4  |
++--+--+ +-----+ +-----+
+   |
++--+--+
+|  5  |
++--+--+
+   |
++--+--+
+|  4  |
++-----+
+```
+
 It's not allowed to move a node into its posterity, which will lead an error:
 
 ```javascript
@@ -118,35 +144,34 @@ redis.tinsert('mytree', '3', '1');
 // ERR parent node cannot be the posterity of new node
 ```
 
-### TPARENT key node
+### TPARENTS key node
 
-Get the parent of the node. Returns `null` when doesn't have parent.
+Get the parents of the node. Returns an empty array when doesn't have parent.
 
 ```javascript
-redis.tparent('mytree', '5'); // '2'
-redis.tparent('mytree', '1'); // null
-redis.tparent('non-exists tree', '1'); // null
-redis.tparent('mytree', 'non-exists node'); // null
+redis.tparent('mytree', '5'); // ['2']
+redis.tparent('mytree', '1'); // []
+redis.tparent('mytree', '4'); // ['5', '1']
+redis.tparent('non-exists tree', '1'); // []
+redis.tparent('mytree', 'non-exists node'); // []
 ```
 
-### TANCESTORS key node
+The order of parents is random.
 
-Get the ancestors of the node. Returns an empty arrey when doesn't have ancestors.
+### TPATH key from to
+
+Get the path between `from` and `to`. The depth of `from` must lower than `to`. Return `null` if `from` isn't a ancestor of `to`.
 
 ```javascript
-redis.tancestors('mytree', '5'); // ['2', '1']
-redis.tancestors('mytree', '1'); // []
-redis.tancestors('non-exists tree', '1'); // []
-redis.tancestors('mytree', 'non-exists node'); // []
+redis.tancestors('mytree', '1', '5'); // ['2']
+redis.tancestors('mytree', '1', '3'); // []
+redis.tancestors('mytree', '1', '7'); // null
 ```
 
-`TANCESTORS` accepts a `LEVEL` option to specified how many levels of ancestors to fetch:
+If there's more than one path between the two nodes, the shorter path will be returned:
 
 ```javascript
-redis.tancestors('mytree', '5', { level: 2 }); // ['2', '1']
-redis.tancestors('mytree', '5', { level: 1 }); // ['2']
-redis.tancestors('mytree', '5', { level: 0 }); // []
-redis.tancestors('mytree', '5', { level: 3 }); // ['2', '1']
+redis.tancestors('mytree', '1', '4'); // []
 ```
 
 ### TCHILDREN key node
@@ -154,9 +179,9 @@ redis.tancestors('mytree', '5', { level: 3 }); // ['2', '1']
 Get the children of the node. Each node has at least two properties:
 
 1. `node`: The node itself.
-2. `hasChild`: `1` or `0`, whether the node has at least one child.
+2. `hasChild`: `true` or `false`, whether the node has at least one child.
 
-If the `hasChild` is `1`, there will be an additional `children` property, which is an array containing the children of the node.
+If the `hasChild` is `true`, there will be an additional `children` property, which is an array containing the children of the node.
 
 
 ```javascript
@@ -182,11 +207,43 @@ redis.tchildren('mytree', '1', { level: 1 });
 // ]
 ```
 
-Notice that although node '2' has a child (its `hasChild` is `1`), it doesn't has the `children` property since we are only insterested in the first level children by specifying `{ level: 1 }`.
+Notice that although node '2' has a child (its `hasChild` is `true`), it doesn't has the `children` property since we are only insterested in the first level children by specifying `{ level: 1 }`.
 
-### TDEL key node
+### TREM key parent count node
 
-Delete a node recursively. Returns the number of nodes that being deleted;
+Remove the reference of a node from a parent.
+
+```javascript
+redis.trem('mytree', '5', 0, '4');
+```
+
+Creates:
+
+```
+        +-----+
+        |  1  |
+   +----+--+--+----+
+   |       |       |
++--+--+ +--+--+ +--+--+
+|  2  | |  3  | |  4  |
++--+--+ +-----+ +-----+
+   |
++--+--+
+|  5  |
++-----+
+```
+
+The `count` argument influences the operation in the following ways:
+
+* count > 0: Remove nodes moving from head to tail.
+* count < 0: Remove nodes moving from tail to head.
+* count = 0: Remove all nodes.
+
+`TREM` returns the remaining nodes in the parent.
+
+### TDESTROY key node
+
+Destroy a node recursively and remove all references of it.
 
 ```javascript
 redis.tdel('mytree', '2'); // returns 2, since "2" and "5" are deleted.
