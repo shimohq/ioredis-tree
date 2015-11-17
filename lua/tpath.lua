@@ -36,27 +36,30 @@ local copyTable = function (t)
   return t2
 end
 
-
-queue = { {id} }
+local queue = { {id} }
 -- push the first path into the queue
 while #queue > 0 do
   -- get the first path from the queue
-  lpath = table.remove(queue, 1)
+  local lpath = table.remove(queue, 1)
   -- get the last node from the lpath
-  node = lpath[#lpath]
+  local node = lpath[#lpath]
   -- enumerate all adjacent nodes, construct a new lpath and push it into the queue
   local children = redis.call('get', prefix .. node)
-  for _, child in ipairs(children) do
-    if child[1] == to then
-      for _, v in ipairs(path) do
-        lpath[#lpath + 1] = v
+  if children then
+    children = cmsgpack.unpack(children)
+    for _, child in ipairs(children) do
+      if child[1] == to then
+        for _, v in ipairs(path) do
+          lpath[#lpath + 1] = v
+        end
+        table.remove(lpath, 1)
+        return lpath
       end
-      return lpath
-    end
-    if child[2] ~= 0 then
-      local newPath = copyTable(lpath)
-      newPath[#newPath + 1] = child
-      queue[#queue + 1] = newPath
+      if child[2] ~= 0 then
+        local newPath = copyTable(lpath)
+        newPath[#newPath + 1] = child[1]
+        queue[#queue + 1] = newPath
+      end
     end
   end
 end
