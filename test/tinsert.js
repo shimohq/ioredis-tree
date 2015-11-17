@@ -12,6 +12,13 @@ describe('tinsert', function () {
     });
   });
 
+  it('throws error when insert parent to child', function (done) {
+    redis.tinsert('tree', '5', '2').catch(function (err) {
+      expect(err).to.match(/cannot be the posterity/);
+      done();
+    });
+  });
+
   describe('INDEX', function () {
     it('inserts to the tail when not specified options', function () {
       return redis.tinsert('tree', 'ROOT', 'node').then(function (index) {

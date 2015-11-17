@@ -3,6 +3,13 @@ if #ARGV ~= 4 then
 end
 
 local child = ARGV[2]
+local childHasChild = redis.call('exists', prefix .. child)
+
+if childHasChild then
+  if getPath(child, id) then
+    return redis.error_reply("ERR parent node cannot be the posterity of new node")
+  end
+end
 
 -- Among BEFORE, AFTER and INDEX
 local insertType = string.upper(ARGV[3])
@@ -70,7 +77,7 @@ elseif insertPivot > parentChildListLength + 1 then
   insertPivot = parentChildListLength + 1
 end
 
-table.insert(parentChildList, insertPivot, { child, redis.call('exists', prefix .. child) })
+table.insert(parentChildList, insertPivot, { child, childHasChild })
 
 -- Update parent childCount
 if not parentHasChildren then

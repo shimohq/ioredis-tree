@@ -7,11 +7,14 @@ function loadScript(name) {
 
 var head = loadScript('_head').split('\n').filter(isNotCommend).join(' ') + ' ';
 var deleteReference = loadScript('_delete_reference').split('\n').filter(isNotCommend).join(' ') + ' ';
+var getPath = loadScript('_get_path').split('\n').filter(isNotCommend).join(' ') + ' ';
 
 var commands = ['tinsert', 'tchildren', 'tparents', 'tpath', 'trem', 'tdestroy', 'texists'].map(function (command) {
   var lua = loadScript(command);
   if (command === 'trem' || command === 'tdestroy') {
     lua = deleteReference + lua;
+  } else if (command === 'tpath' || command === 'tinsert') {
+    lua = getPath + lua;
   }
   return {
     name: command,
