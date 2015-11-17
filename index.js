@@ -67,7 +67,7 @@ function RedisTree(redis) {
 function convertNode(node) {
   var ret = {
     node: node[0],
-    childCount: node[1]
+    hasChild: !!node[1]
   };
 
   if (node.length > 2) {

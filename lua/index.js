@@ -6,11 +6,16 @@ function loadScript(name) {
 }
 
 var head = loadScript('_head').split('\n').filter(isNotCommend).join(' ') + ' ';
+var deleteReference = loadScript('_delete_reference').split('\n').filter(isNotCommend).join(' ') + ' ';
 
-var commands = ['tinsert', 'tchildren', 'tparent', 'tancestors', 'tdel', 'texists'].map(function (command) {
+var commands = ['tinsert', 'tchildren', 'tparents', 'tpath', 'trem', 'tdestroy', 'texists'].map(function (command) {
+  var lua = loadScript(command);
+  if (command === 'trem' || command === 'tdestroy') {
+    lua = deleteReference + lua;
+  }
   return {
     name: command,
-    lua: head + loadScript(command)
+    lua: head + lua
   };
 });
 

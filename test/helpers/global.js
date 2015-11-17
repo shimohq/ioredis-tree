@@ -15,5 +15,17 @@ require('../../')(redis);
 
 
 beforeEach(function () {
-  return redis.flushall();
+  return redis.flushall().then(function () {
+    return Promise.all([
+      redis.tinsert('tree', 'ROOT1', '1'),
+      redis.tinsert('tree', 'ROOT1', '2'),
+      redis.tinsert('tree', 'ROOT1', '3'),
+      redis.tinsert('tree', '2', '4'),
+      redis.tinsert('tree', '4', '5'),
+      redis.tinsert('tree', '3', '6'),
+      redis.tinsert('tree', 'ROOT2', '8'),
+      redis.tinsert('tree', '8', '6'),
+      redis.tinsert('tree', '8', '7')
+    ]);
+  });
 });

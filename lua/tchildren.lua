@@ -9,12 +9,15 @@ getChildren = function (id, level, result)
 
   for i, v in ipairs(list) do
     local cid = v[1]
-    local childCount = v[2]
+    local hasChild = v[2]
 
-    local item = { cid, childCount }
+    local item = { cid, hasChild }
 
-    if childCount > 0 and level ~= 0 then
+    if hasChild ~= 0 and level ~= 0 then
       getChildren(cid, level, item)
+      if #item == 2 then
+        v[2] = 0
+      end
     end
 
     result[#result + 1] = item
