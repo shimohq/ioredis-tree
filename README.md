@@ -187,7 +187,7 @@ If the `hasChild` is `true`, there will be an additional `children` property, wh
 ```javascript
 redis.tchildren('mytree', '1');
 // [
-//   { node: '2', hasChild: true, children: [{ node: '5', hasChild 0 }] },
+//   { node: '2', hasChild: true, children: [{ node: '5', hasChild: false }] },
 //   { node: '3', hasChild: false },
 //   { node: '4', hasChild: false }
 // ]
