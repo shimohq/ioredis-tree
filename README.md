@@ -163,15 +163,15 @@ The order of parents is random.
 Get the path between `from` and `to`. The depth of `from` must lower than `to`. Return `null` if `from` isn't a ancestor of `to`.
 
 ```javascript
-redis.tancestors('mytree', '1', '5'); // ['2']
-redis.tancestors('mytree', '1', '3'); // []
-redis.tancestors('mytree', '1', '7'); // null
+redis.tpath('mytree', '1', '5'); // ['2']
+redis.tpath('mytree', '1', '3'); // []
+redis.tpath('mytree', '1', '7'); // null
 ```
 
 If there's more than one path between the two nodes, the shorter path will be returned:
 
 ```javascript
-redis.tancestors('mytree', '1', '4'); // []
+redis.tpath('mytree', '1', '4'); // []
 ```
 
 ### TCHILDREN key node
