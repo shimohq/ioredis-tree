@@ -1,5 +1,5 @@
 # ioredis-tree
-[Work In Progress] A robust tree structure implementation for Redis
+A robust tree structure implementation for Redis
 
 [![Build Status](https://travis-ci.org/shimohq/ioredis-tree.svg?branch=master)](https://travis-ci.org/shimohq/ioredis-tree)
 [![Dependency Status](https://david-dm.org/shimohq/ioredis-tree.svg)](https://david-dm.org/shimohq/ioredis-tree)
@@ -246,7 +246,7 @@ The `count` argument influences the operation in the following ways:
 Destroy a node recursively and remove all references of it. Returns the count of nodes being deleted.
 
 ```javascript
-redis.tdel('mytree', '2'); // returns 2, since "2" and "5" are deleted.
+redis.tdestroy('mytree', '2'); // returns 2, since "2" and "5" are deleted.
 ```
 
 Creates:

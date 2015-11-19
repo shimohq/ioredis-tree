@@ -18,30 +18,31 @@ local deleteReference = function (parent, node, count)
   if count < 0 then
     count = -count
     for i = listSize, 1, -1 do
-       local item = list[i];
-       if item[1] == id then
-         if count == deleted then
-           remain = remain + 1
-         else
+      local item = list[i];
+      if item[1] == node then
+        if count == deleted then
+          remain = remain + 1
+        else
           table.remove(list, i)
           deleted = deleted + 1
-         end
-       end
+        end
+      end
     end
   else
     local i = 1
-    while i <= listSize do
-       local item = list[i];
-       if item[1] == id then
-         if count == deleted then
-           remain = remain + 1
-         else
-           table.remove(list, i)
-           deleted = deleted + 1
-         end
+    while i <= #list do
+      local item = list[i];
+      if item[1] == node then
+        if count == deleted then
+          remain = remain + 1
+          i = i + 1;
         else
-          i = i + 1
-       end
+          table.remove(list, i)
+          deleted = deleted + 1
+        end
+      else
+        i = i + 1
+      end
     end
   end
 
