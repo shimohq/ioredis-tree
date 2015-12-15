@@ -1,6 +1,6 @@
 {
   "name": "ioredis-tree",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A robust tree structure implementation for Redis",
   "main": "index.js",
   "directories": {

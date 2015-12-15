@@ -3,8 +3,11 @@ if #ARGV ~= 4 then
 end
 
 local child = ARGV[2]
-local childHasChild = redis.call('exists', prefix .. child)
+if child == id then
+  return redis.error_reply("ERR parent node cannot be same with new node")
+end
 
+local childHasChild = redis.call('exists', prefix .. child)
 if childHasChild then
   if getPath(child, id) then
     return redis.error_reply("ERR parent node cannot be the posterity of new node")

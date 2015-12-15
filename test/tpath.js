@@ -30,4 +30,15 @@ describe('tpath', function () {
       }),
     ]);
   });
+
+  it('throws when there is a infinite loop', function (done) {
+    Promise.all([
+      redis.sadd('{tree}::b::P', 'b')
+    ]).then(function () {
+      redis.tpath('tree', 'a', 'b').catch(function (e) {
+        expect(e).to.match(/infinite loop found/);
+        done();
+      });
+    });
+  });
 });
