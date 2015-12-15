@@ -30,4 +30,31 @@ describe('tpath', function () {
       }),
     ]);
   });
+
+  it('throws when there is a infinite loop', function (done) {
+    Promise.all([
+      redis.sadd('{tree}::b::P', 'b')
+    ]).then(function () {
+      redis.tpath('tree', 'a', 'b').catch(function (e) {
+        expect(e).to.match(/infinite loop/);
+        done();
+      });
+    });
+  });
+
+  it('throws when there is a infinite loop (with multiple parents)', function (done) {
+    redis.defineCommand('_tdirectlyset', {
+      numberOfKeys: 0,
+      lua: 'redis.call("set", "{tree}::a", cmsgpack.pack({{ "a", 1 }})) return 0'
+    })
+    Promise.all([
+      redis._tdirectlyset(),
+      redis.sadd('{tree}::b::P', 'c', 'd')
+    ]).then(function () {
+      redis.tpath('tree', 'a', 'b').catch(function (e) {
+        expect(e).to.match(/infinite loop/);
+        done();
+      });
+    });
+  });
 });

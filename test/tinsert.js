@@ -19,6 +19,13 @@ describe('tinsert', function () {
     });
   });
 
+  it('throws error when insert node to itself', function (done) {
+    redis.tinsert('tree', '5', '5').catch(function (err) {
+      expect(err).to.match(/parent node cannot be same with new node/);
+      done();
+    });
+  });
+
   describe('INDEX', function () {
     it('inserts to the tail when not specified options', function () {
       return redis.tinsert('tree', 'ROOT', 'node').then(function (index) {

@@ -14,6 +14,9 @@ getChildren = function (id, level, result)
     local item = { cid, hasChild }
 
     if hasChild ~= 0 and level ~= 0 then
+      if (cid == id) then
+        return redis.error_reply("ERR infinite loop found in 'tchildren' command")
+      end
       getChildren(cid, level, item)
       if #item == 2 then
         v[2] = 0

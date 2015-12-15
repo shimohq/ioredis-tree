@@ -1,9 +1,19 @@
 local getPath = function (from, to)
+  if from == to then
+    return nil
+  end
+
+  local visitedNode = {}
+
   -- First step, we backtrack to the first ancestor that has
   -- more than one parent to reduce the overhead.
   local path = {}
 
   while true do
+    if visitedNode[to] then
+      return redis.error_reply("ERR infinite loop (parent) found in 'tpath' command")
+    end
+    visitedNode[to] = true
     local parents = redis.call('smembers', prefix .. to .. '::P')
     local length = #parents
     if length == 0 then
@@ -51,6 +61,9 @@ local getPath = function (from, to)
           return lpath
         end
         if child[2] ~= 0 then
+          if child[1] == lpath[#lpath] then
+            return redis.error_reply("ERR infinite loop (children) found in 'tpath' command")
+          end
           local newPath = copyTable(lpath)
           newPath[#newPath + 1] = child[1]
           queue[#queue + 1] = newPath
