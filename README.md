@@ -270,6 +270,26 @@ redis.texists('mytree', '2'); // 0
 redis.texists('mytree', '1'); // 1
 ```
 
+### TRENAME key node name
+
+Rename a node.
+
+```javascript
+redis.trename('mytree', '2', '5');
+```
+
+Creates:
+
+```
+        +-----+
+        |  1  |
+   +----+--+--+----+
+   |               |
++--+--+         +--+--+
+|  5  |         |  4  |
++-----+         +-----+
+```
+
 ## Cluster Compatibility
 
 This module supports Redis Cluster by ensuring all nodes that are belong to a tree have a same slot.
