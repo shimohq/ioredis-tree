@@ -62,6 +62,21 @@ function RedisTree(redis) {
       return tinsert.apply(redis, argv).nodeify(callback);
     };
   })(redis.tinsert);
+
+  (function (tmrem) {
+    redis.tmrem = function (key, node, options, callback) {
+      if (typeof options === 'function') {
+        callback = options;
+        options = null;
+      }
+      var argv = [key, node];
+      options = options || {};
+      if (options.not != null) {
+        argv.push('NOT', options.not);
+      }
+      return tmrem.apply(redis, argv).nodeify(callback);
+    };
+  })(redis.tmrem);
 }
 
 function convertNode(node) {

@@ -241,6 +241,14 @@ The `count` argument influences the operation in the following ways:
 
 `TREM` returns the remaining nodes in the parent.
 
+### TMREM key node
+
+Remove the node from all parents. Use `not` option to exclude a parent.
+
+```javascript
+redis.tmrem('mytree', '2', { not: '3' });
+```
+
 ### TDESTROY key node
 
 Destroy a node recursively and remove all references of it. Returns the count of nodes being deleted.
