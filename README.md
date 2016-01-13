@@ -298,6 +298,51 @@ Creates:
 +-----+         +-----+
 ```
 
+
+### TPRUNE key node
+
+Prune a tree to remove its children from parents which don't belong to the node.
+
+Given the following two trees:
+
+```
+        +-----+
+        |  1  |
+   +----+--+--+----+
+   |               |
++--+--+         +--+--+
+|  5  |         |  4  |
++-----+         +-----+
+
+        +-----+
+        |  6  |
+   +----+--+--+
+   |
++--+--+
+|  5  |
++-----+
+```
+
+```javascript
+redis.tprune('mytree', '1');
+```
+
+Creates:
+
+```
+        +-----+
+        |  1  |
+   +----+--+--+----+
+   |               |
++--+--+         +--+--+
+|  5  |         |  4  |
++-----+         +-----+
+
+        +-----+
+        |  6  |
+        +--+--+
+```
+
 ## Cluster Compatibility
 
 This module supports Redis Cluster by ensuring all nodes that are belong to a tree have a same slot.
