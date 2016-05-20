@@ -29,6 +29,9 @@ end
 
 for i, v in ipairs(sourceList) do
   local cid = v[1]
+  if getPath(cid, to) then
+    return redis.error_reply("ERR parent node cannot be the posterity of new node")
+  end
   if position == 'APPEND' then
     table.insert(targetList, v)
   else

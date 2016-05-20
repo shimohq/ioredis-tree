@@ -14,7 +14,7 @@ var commands = ['tinsert', 'tchildren', 'tparents', 'tpath', 'trem', 'tmrem',
   var lua = loadScript(command);
   if (command === 'trem' || command === 'tdestroy' || command === 'tmrem' || command === 'tprune') {
     lua = deleteReference + lua;
-  } else if (command === 'tpath' || command === 'tinsert') {
+  } else if (command === 'tpath' || command === 'tinsert' || command === 'tmovechildren') {
     lua = getPath + lua;
   }
   return {
