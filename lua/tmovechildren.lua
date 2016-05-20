@@ -1,14 +1,7 @@
--- Parent: prefix .. id / key
-local parents = redis.call('smembers', key .. '::P')
 local to = ARGV[2]
-local position = ARGV[3]
-
-local total = 0
-for _, parent in ipairs(parents) do
-  if not exclude or parent ~= exclude then
-    total = total + 1
-    deleteReference(parent, id, 0)
-  end
+local position = 'APPEND'
+if ARGV[3] then
+  position = string.upper(ARGV[3])
 end
 
 local value = redis.call('get', key)
@@ -17,28 +10,41 @@ if not value then
   return 0
 end
 
-local list = cmsgpack.unpack(value)
+local sourceList = cmsgpack.unpack(value)
+local sourceListSize = #sourceList;
 
-if #list == 0 then
+if sourceListSize == 0 then
   return 0
 end
 
-local parentHasChildren = redis.call('exists', prefix .. to) == 1
-
-for i, v in ipairs(list) do
+local parentHasChildren
+local targetList = redis.call('get', prefix .. to)
+if targetList then
+  parentHasChildren = true
+  targetList = cmsgpack.unpack(targetList)
+else
+  parentHasChildren = false
+  targetList = {}
 end
 
-if deleted > 0 then
-  if #list == 0 then
-    updateHasChildenCache(parent, 0)
-    redis.call('del', prefix .. parent)
+for i, v in ipairs(sourceList) do
+  local cid = v[1]
+  if position == 'APPEND' then
+    table.insert(targetList, v)
   else
-    redis.call('set', prefix .. parent, cmsgpack.pack(list))
+    table.insert(targetList, i, v)
   end
+  redis.call('sadd', prefix .. cid .. '::P', to)
+  redis.call('srem', prefix .. cid .. '::P', id)
 end
 
-if remain == 0 then
-  redis.call('srem', prefix .. node .. '::P', parent)
+-- Update parent childCount
+if not parentHasChildren then
+  updateHasChildenCache(to, 1)
 end
 
-return remain
+redis.call('set', prefix .. to, cmsgpack.pack(targetList))
+updateHasChildenCache(id, 0)
+redis.call('del', key)
+
+return sourceListSize

@@ -269,6 +269,16 @@ Creates:
 +-----+         +-----+
 ```
 
+### TMOVECHILDREN key sourceNode targetNode [APPEND|PREPEND]
+
+Move all the children of the `sourceNode` to `targetNode`. By default the new nodes will be
+appended to the target node, if `PREPEND` option is passed, the new nodes will be prepended
+to the target node.
+
+```javascript
+redis.tmovechildren('mytree', 'source', 'target', 'PREPEND');
+```
+
 ### TEXISTS key node
 
 Returns if node exists.

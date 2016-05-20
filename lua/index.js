@@ -9,7 +9,8 @@ var head = loadScript('_head').split('\n').filter(isNotCommend).join(' ') + ' ';
 var deleteReference = loadScript('_delete_reference').split('\n').filter(isNotCommend).join(' ') + ' ';
 var getPath = loadScript('_get_path').split('\n').filter(isNotCommend).join(' ') + ' ';
 
-var commands = ['tinsert', 'tchildren', 'tparents', 'tpath', 'trem', 'tmrem', 'tdestroy', 'texists', 'trename', 'tprune'].map(function (command) {
+var commands = ['tinsert', 'tchildren', 'tparents', 'tpath', 'trem', 'tmrem',
+  'tdestroy', 'texists', 'trename', 'tprune', 'tmovechildren'].map(function (command) {
   var lua = loadScript(command);
   if (command === 'trem' || command === 'tdestroy' || command === 'tmrem' || command === 'tprune') {
     lua = deleteReference + lua;
