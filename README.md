@@ -14,10 +14,7 @@ npm install ioredis-tree
 
 ```javascript
 var Redis = require('ioredis');
-var redis = new Redis();
-
-var tree = require('ioredis-tree');
-tree(redis);
+var redis = require('ioredis-tree')(new Redis());
 
 redis.tinsert('files', 'parent', 'node');
 ```

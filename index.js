@@ -77,6 +77,8 @@ function RedisTree(redis) {
       return tmrem.apply(redis, argv).nodeify(callback);
     };
   })(redis.tmrem);
+
+  return redis;
 }
 
 function convertNode(node) {
