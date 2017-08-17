@@ -146,11 +146,11 @@ redis.tinsert('mytree', '3', '1');
 Get the parents of the node. Returns an empty array when doesn't have parent.
 
 ```javascript
-redis.tparent('mytree', '5'); // ['2']
-redis.tparent('mytree', '1'); // []
-redis.tparent('mytree', '4'); // ['5', '1']
-redis.tparent('non-exists tree', '1'); // []
-redis.tparent('mytree', 'non-exists node'); // []
+redis.tparents('mytree', '5'); // ['2']
+redis.tparents('mytree', '1'); // []
+redis.tparents('mytree', '4'); // ['5', '1']
+redis.tparents('non-exists tree', '1'); // []
+redis.tparents('mytree', 'non-exists node'); // []
 ```
 
 The order of parents is random.
