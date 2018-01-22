@@ -31,6 +31,27 @@ describe('tpath', function () {
     ]);
   });
 
+  it('ignores node with ":"', function () {
+    return Promise.all([
+      redis.tinsert('tree2', 'user:1', '1'),
+      redis.tinsert('tree2', '1', '2'),
+      redis.tinsert('tree2', 'user:2', '2'),
+      redis.tinsert('tree2', 'user:3', 'user:2'),
+    ]).then(function () {
+      return Promise.all([
+        redis.tpath('tree2', 'user:3', '2').then(function (res) {
+          expect(res).to.eql(null);
+        }),
+        redis.tpath('tree2', 'user:2', '2').then(function (res) {
+          expect(res).to.eql([]);
+        }),
+        redis.tpath('tree2', 'user:1', '2').then(function (res) {
+          expect(res).to.eql(['1']);
+        })
+      ]);
+    })
+  });
+
   it('throws when there is a infinite loop', function (done) {
     Promise.all([
       redis.sadd('{tree}::b::P', 'b')
