@@ -19,6 +19,10 @@ var redis = require('ioredis-tree')(new Redis());
 redis.tinsert('files', 'parent', 'node');
 ```
 
+## NOTE
+
+Starting from v1.0.0, ioredis-tree assumes that nodes containing char ':' are the root of the tree for performance reasons.
+
 ## API
 
 ### TINSERT key parent node

@@ -19,13 +19,17 @@ local getPath = function (from, to)
     if length == 0 then
       return nil
     else
+      local filteredParents = {}
       for _, parent in ipairs(parents) do
         if parent == from then
           return path
         end
+        if not string.find(parent, ':') then
+          table.insert(filteredParents, parent)
+        end
       end
-      if length == 1 then
-        to = parents[1]
+      if #filteredParents == 1 then
+        to = filteredParents[1]
         table.insert(path, 1, to)
       else
         break
