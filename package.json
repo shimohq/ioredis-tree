@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/shimohq/ioredis-tree#readme",
   "devDependencies": {
-    "bluebird": "^3.0.5",
     "chai": "^3.4.0",
     "ioredis": "^1.10.0",
     "mocha": "^2.3.3"

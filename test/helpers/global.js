@@ -1,7 +1,5 @@
 'use strict';
 
-GLOBAL.Promise = require('bluebird');
-
 if (process.env.NODE_ENV !== 'test') {
   throw new Error('expect NODE_ENV to be "test"');
 }

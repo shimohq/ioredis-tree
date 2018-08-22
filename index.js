@@ -1,4 +1,5 @@
 var commands = require('./lua');
+var asCallback = require('standard-as-callback');
 
 function RedisTree(redis) {
   commands.forEach(function (command) {
@@ -19,12 +20,12 @@ function RedisTree(redis) {
       if (options && options.level != null) {
         argv.push('LEVEL', options.level);
       }
-      return tchildren.apply(redis, argv).then(function (res) {
+      return asCallback(tchildren.apply(redis, argv).then(function (res) {
         if (!Array.isArray(res)) {
           return res;
         }
         return res.map(convertNode);
-      }).nodeify(callback);
+      }), callback);
     };
   })(redis.tchildren);
 
@@ -38,7 +39,10 @@ function RedisTree(redis) {
       if (options && options.level != null) {
         argv.push('LEVEL', options.level);
       }
-      return tancestors.apply(redis, argv).nodeify(callback);
+      return asCallback(
+        tancestors.apply(redis, argv),
+        callback
+      );
     };
   })(redis.tancestors);
 
@@ -59,7 +63,10 @@ function RedisTree(redis) {
       } else {
         argv.push('INDEX', -1);
       }
-      return tinsert.apply(redis, argv).nodeify(callback);
+      return asCallback(
+        tinsert.apply(redis, argv),
+        callback
+      );
     };
   })(redis.tinsert);
 
@@ -74,7 +81,10 @@ function RedisTree(redis) {
       if (options.not != null) {
         argv.push('NOT', options.not);
       }
-      return tmrem.apply(redis, argv).nodeify(callback);
+      return asCallback(
+        tmrem.apply(redis, argv),
+        callback
+      );
     };
   })(redis.tmrem);
 
