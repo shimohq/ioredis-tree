@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "NODE_ENV=test mocha"
+    "test": "NODE_ENV=test mocha --exit"
   },
   "repository": {
     "type": "git",
@@ -25,8 +25,11 @@
   },
   "homepage": "https://github.com/shimohq/ioredis-tree#readme",
   "devDependencies": {
-    "chai": "^3.4.0",
+    "chai": "^4.1.2",
     "ioredis": "^1.10.0",
-    "mocha": "^2.3.3"
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "standard-as-callback": "^1.0.1"
   }
 }

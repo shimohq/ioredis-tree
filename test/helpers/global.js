@@ -5,10 +5,10 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 var chai = require('chai');
-GLOBAL.expect = chai.expect;
+global.expect = chai.expect;
 
 var Redis = require('ioredis');
-GLOBAL.redis = new Redis();
+global.redis = new Redis();
 require('../../')(redis);
 
 
