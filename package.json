@@ -29,7 +29,7 @@
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "ioredis": "^4.0.0",
+    "ioredis": "^4.24.2",
     "standard-as-callback": "^1.0.1"
   }
 }
